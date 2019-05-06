@@ -78,7 +78,7 @@ class RequestList:
     def print(self):
         table = PrettyTable(['ID', 'Vehicle', 'Zip Code', 'Vehicle ID'])
         for request in self.rList:
-           table.add_row([request.id, request.vType, request.zip, request.vehID])
+           table.add_row([request.id, request.vType, request.zip, request.vehicle])
         print(table)
 
     def __str__(self):
@@ -135,6 +135,8 @@ class ZipGraph:
     def constructFromZDList(self, zList: ZipDistanceList):
         for d in zList.zList:
             self.addDist(d)
+        for e in self.g.nodes:
+            self.vehiclesByZip.update({str(e):[]})
 
     def dijkstras(self, startZip):
         nodes = set(self.g.nodes)
@@ -172,7 +174,16 @@ class ZipGraph:
 
     def updateVehicleLocations(self, elist: EmergencyVehicleList):
         for i in elist:
-            self.vehiclesByZip[i.zip].append(i)
+            # print(i.zip)
+            try:
+                zipList = self.vehiclesByZip[str(i.zip)]
+            except:
+                self.vehiclesByZip.update({str(i.zip):[]})
+                zipList = self.vehiclesByZip[str(i.zip)]
+
+            zipList.append(i)
+
+            self.vehiclesByZip.update({str(i.zip):zipList})
 
 
 
@@ -180,7 +191,7 @@ class ZipGraph:
         dists = self.dijkstras(startZip)
         while len(dists) > 0 :
             u = min(dists, key=dists.get)
-            for e in  self.vehiclesByZip[u]:
+            for e in  self.vehiclesByZip[str(u)]:
                 if e.vType == vehicleType:
                     return e
             dists.pop(u)
@@ -206,13 +217,13 @@ with open('EmergencyVehicles.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     ourVs = EmergencyVehicleList()
     ourVs.addAllFromCSV(reader)
-    print(ourVs)
+    # print(ourVs)
 
 with open('Request.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     theList = RequestList()
     theList.addAllFromCSV(reader)
-    theList.print()
+    # theList.print()
 
 with open('Distance.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
