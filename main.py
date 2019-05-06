@@ -139,7 +139,11 @@ class ZipGraph:
                 neighbors.add(v)
             neighbors = neighbors - removed
             for v in neighbors:
-                alt = distance[u] + self.g[str(u)][str(v)] #maybe not needed??
+                alt = distance[u] + self.g[u][v]['weight'] #might need to be casted to strings
+                if alt < distance[v]:
+                    distance[v] = alt
+                    prev[v] = u
+        return prev, distance
 
 
 
@@ -171,7 +175,7 @@ with open('Request.csv', newline='') as csvfile:
     theList.addAllFromCSV(reader)
     print(theList)
 
-with open('Distance.csv', newline='') as csvfile:
+with open('testDist.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     theList = ZipDistanceList()
     theList.addAllFromCSV(reader)
@@ -181,6 +185,6 @@ with open('Distance.csv', newline='') as csvfile:
     # print(dict(g.g.nodes))
 
 
-    print(g.g.edges.data())
-    print(g.g.nodes)
-    print(g.g['64151']['64150']['weight'])
+    # print(g.g.edges.data())
+
+    print(g.dijkstras('001'))
