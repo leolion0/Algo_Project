@@ -2,6 +2,7 @@ import csv
 import networkx as nx
 import sys
 import copy
+from prettytable import PrettyTable
 
 class EmergencyVehicle:
     def __init__(self, id=-1, vType = -1, zip =-1):
@@ -25,11 +26,18 @@ class EmergencyVehicleList:
 
     def addAllFromCSV(self, reader: csv.reader):
         tupList = list(reader)
+
         for row in tupList:
             # print(row)
             id,vType,zip = row
             newVeh = EmergencyVehicle(id,vType,zip)
             self.vList.append(newVeh)
+
+    def print(self):
+        table = PrettyTable(['ID', 'Type', 'Zip Code'])
+        for veh in self.vList:
+           table.add_row([veh.id, veh.vType, veh.zip])
+        print(table)
 
     def __str__(self):
         out = ''
@@ -43,6 +51,7 @@ class Request:
         self.id = id
         self.vType = vType
         self.zip = zip
+        self.vehID = None
 
     def __str__(self):
         out = self.id + ", "
@@ -65,6 +74,12 @@ class RequestList:
             id, vType, zip = row
             newVeh = Request(id, vType, zip)
             self.rList.append(newVeh)
+    
+    def print(self):
+        table = PrettyTable(['ID', 'Vehicle', 'Zip Code', 'Vehicle ID'])
+        for request in self.rList:
+           table.add_row([request.id, request.vType, request.zip, request.vehID])
+        print(table)
 
     def __str__(self):
         out = ''
@@ -176,13 +191,13 @@ with open('EmergencyVehicles.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     theList = EmergencyVehicleList()
     theList.addAllFromCSV(reader)
-    print(theList)
+    theList.print()
 
 with open('Request.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     theList = RequestList()
     theList.addAllFromCSV(reader)
-    print(theList)
+    theList.print()
 
 with open('testDist.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
