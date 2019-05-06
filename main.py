@@ -1,5 +1,6 @@
 import csv
 import networkx as nx
+import sys
 
 
 class EmergencyVehicle:
@@ -119,6 +120,39 @@ class ZipGraph:
         for d in zList.zList:
             self.addDist(d)
 
+    def dijkstras(self, startZip):
+        nodes = set(self.g.nodes)
+        distance = {}
+        prev = {}
+        for v in nodes:
+            distance[v] = sys.maxsize
+            prev[v] = None
+        distance[startZip] = 0
+        removed = set()
+        while not nodes: #loop until no nodes are left
+            u = min(distance, key=distance.get)
+            removed.add(u)
+            nodes.remove(u)
+
+            neighbors = set()
+            for v in iter(self.g[u]):
+                neighbors.add(v)
+            neighbors = neighbors - removed
+            for v in neighbors:
+                alt = distance[u] + self.g[str(u)][str(v)] #maybe not needed??
+
+
+
+
+
+
+
+
+
+
+        pass
+
+
     def __str__(self):
         return str(self.g)
 
@@ -143,5 +177,10 @@ with open('Distance.csv', newline='') as csvfile:
     theList.addAllFromCSV(reader)
     g = ZipGraph()
     g.constructFromZDList(theList)
-    print(list(g.g.nodes))
+
+    # print(dict(g.g.nodes))
+
+
     print(g.g.edges.data())
+    print(g.g.nodes)
+    print(g.g['64151']['64150']['weight'])
