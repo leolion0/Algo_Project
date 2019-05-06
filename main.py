@@ -84,6 +84,7 @@ class ZipDistance:
         out += str(self.dist)
         return out
 
+
 class ZipDistanceList:
     def __init__(self, inlist=[]):
         self.zList = inlist
@@ -124,23 +125,20 @@ class ZipGraph:
 
 
 
-with open('EmergencyVehicles.txt', newline='') as csvfile:
+with open('EmergencyVehicles.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
-
     theList = EmergencyVehicleList()
     theList.addAllFromCSV(reader)
     print(theList)
 
-with open('Request.txt', newline='') as csvfile:
+with open('Request.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
-
     theList = RequestList()
     theList.addAllFromCSV(reader)
     print(theList)
 
-with open('Distance.txt', newline='') as csvfile:
+with open('Distance.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
-
     theList = ZipDistanceList()
     theList.addAllFromCSV(reader)
     g = ZipGraph()
