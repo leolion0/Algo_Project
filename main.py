@@ -1,7 +1,7 @@
 import csv
 import networkx as nx
 import sys
-
+import copy
 
 class EmergencyVehicle:
     def __init__(self, id=-1, vType = -1, zip =-1):
@@ -124,25 +124,34 @@ class ZipGraph:
         nodes = set(self.g.nodes)
         distance = {}
         prev = {}
-        for v in nodes:
-            distance[v] = sys.maxsize
-            prev[v] = None
+        for n in nodes:
+            distance[n] = sys.maxsize
+            prev[n] = None
         distance[startZip] = 0
         removed = set()
-        while not nodes: #loop until no nodes are left
-            u = min(distance, key=distance.get)
+        while  len(nodes) > 0 : #loop until no nodes are left
+            newDist = copy.deepcopy(distance)
+            for i in removed:
+                try:
+                    newDist.pop(i)
+                except:
+                    pass
+            u = min(newDist, key=newDist.get)
             removed.add(u)
-            nodes.remove(u)
+            try:
+                nodes.remove(u)
+            except:
+                pass
 
             neighbors = set()
             for v in iter(self.g[u]):
                 neighbors.add(v)
             neighbors = neighbors - removed
-            for v in neighbors:
-                alt = distance[u] + self.g[u][v]['weight'] #might need to be casted to strings
-                if alt < distance[v]:
-                    distance[v] = alt
-                    prev[v] = u
+            for z in neighbors:
+                alt = distance[u] + int(self.g[u][z]['weight']) #might need to be casted to strings
+                if alt < distance[z]:
+                    distance[z] = alt
+                    prev[z] = u
         return prev, distance
 
 
@@ -183,8 +192,6 @@ with open('testDist.csv', newline='') as csvfile:
     g.constructFromZDList(theList)
 
     # print(dict(g.g.nodes))
-
-
     # print(g.g.edges.data())
 
     print(g.dijkstras('001'))
