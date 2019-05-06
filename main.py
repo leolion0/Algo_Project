@@ -47,11 +47,11 @@ class EmergencyVehicleList:
 
 
 class Request:
-    def __init__(self, id=-1, vType = -1, zip =-1):
+    def __init__(self, id=-1, vType = -1, zip =-1, vehicleID = -1):
         self.id = id
         self.vType = vType
         self.zip = zip
-        self.vehID = None
+        self.vehicle = vehicleID
 
     def __str__(self):
         out = self.id + ", "
@@ -74,7 +74,7 @@ class RequestList:
             id, vType, zip = row
             newVeh = Request(id, vType, zip)
             self.rList.append(newVeh)
-    
+
     def print(self):
         table = PrettyTable(['ID', 'Vehicle', 'Zip Code', 'Vehicle ID'])
         for request in self.rList:
@@ -126,6 +126,7 @@ class ZipDistanceList:
 class ZipGraph:
     def __init__(self):
         self.g = nx.Graph()
+        self.vehiclesByZip = {}
         pass
 
     def addDist(self, zipDist: ZipDistance):
@@ -167,8 +168,22 @@ class ZipGraph:
                 if alt < distance[z]:
                     distance[z] = alt
                     prev[z] = u
-        return prev, distance
+        return distance
 
+    def updateVehicleLocations(self, elist: EmergencyVehicleList):
+        for i in elist:
+            self.vehiclesByZip[i.zip].append(i)
+
+
+
+    def closestVehicle(self, startZip, vehicleType):
+        dists = self.dijkstras(startZip)
+        while len(dists) > 0 :
+            u = min(dists, key=dists.get)
+            for e in  self.vehiclesByZip[u]:
+                if e.vType == vehicleType:
+                    return e
+            dists.pop(u)
 
 
 
@@ -186,12 +201,12 @@ class ZipGraph:
 
 
 
-
+ourVs = []
 with open('EmergencyVehicles.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
-    theList = EmergencyVehicleList()
-    theList.addAllFromCSV(reader)
-    theList.print()
+    ourVs = EmergencyVehicleList()
+    ourVs.addAllFromCSV(reader)
+    print(ourVs)
 
 with open('Request.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
@@ -199,7 +214,7 @@ with open('Request.csv', newline='') as csvfile:
     theList.addAllFromCSV(reader)
     theList.print()
 
-with open('testDist.csv', newline='') as csvfile:
+with open('Distance.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     theList = ZipDistanceList()
     theList.addAllFromCSV(reader)
@@ -208,5 +223,5 @@ with open('testDist.csv', newline='') as csvfile:
 
     # print(dict(g.g.nodes))
     # print(g.g.edges.data())
-
-    print(g.dijkstras('001'))
+    g.updateVehicleLocations(ourVs)
+    print(g.closestVehicle('64151', 1))
