@@ -192,7 +192,7 @@ class ZipGraph:
         while len(dists) > 0 :
             u = min(dists, key=dists.get)
             for e in  self.vehiclesByZip[str(u)]:
-                if e.vType == vehicleType:
+                if e.vType == str(vehicleType):
                     return e
             dists.pop(u)
 
@@ -235,4 +235,4 @@ with open('Distance.csv', newline='') as csvfile:
     # print(dict(g.g.nodes))
     # print(g.g.edges.data())
     g.updateVehicleLocations(ourVs)
-    print(g.closestVehicle('64151', 1))
+    print(g.closestVehicle('64153', 1))
