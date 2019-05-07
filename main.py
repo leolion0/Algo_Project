@@ -4,6 +4,7 @@ import sys
 import copy
 from prettytable import PrettyTable
 
+
 class EmergencyVehicle:
     def __init__(self, id=-1, vType = -1, zip =-1):
         self.id = id
@@ -40,10 +41,10 @@ class EmergencyVehicleList:
         print(table)
 
     def __str__(self):
-        out = ''
-        for veh in self.vList:
-           out += str(veh) + '\n'
-        return out
+        table = PrettyTable(['VehicleID', 'Type', 'ZipCode'])
+        for v in self.vList:
+           table.add_row([v.id, v.vType,v.zip])
+        return str(table)
 
 
 class Request:
@@ -85,10 +86,10 @@ class RequestList:
         print(table)
 
     def __str__(self):
-        out = ''
+        table = PrettyTable(['ReqID', 'VehicleType', 'ZipCode', 'VehicleID', 'Distance'])
         for veh in self.rList:
-            out += str(veh) + '\n'
-        return out
+           table.add_row([veh.id, veh.vType, veh.zip, veh.vehicle, veh.distance])
+        return str(table)
 
 
 class ZipDistance:
@@ -120,10 +121,10 @@ class ZipDistanceList:
             self.zList.append(newDist)
 
     def __str__(self):
-        out = ''
-        for dist in self.zList:
-            out += str(dist) + '\n'
-        return out
+        table = PrettyTable(['Zip1', 'Zip2', 'Distance'])
+        for z in self.zList:
+           table.add_row([z.zip1, z.zip2, z.dist])
+        return str(table)
 
 
 class ZipGraph:
@@ -188,8 +189,6 @@ class ZipGraph:
 
             self.vehiclesByZip.update({str(i.zip):zipList})
 
-
-
     def closestVehicle(self, startZip, vehicleType):
         dists = self.dijkstras(startZip)
         while len(dists) > 0 :
@@ -199,8 +198,7 @@ class ZipGraph:
                     return e, dists[u]
             dists.pop(u)
 
-
-    #Takes in request, finds closest available vehicle, updates request
+    # Takes in request, finds closest available vehicle, updates request
     # vehicleID and distance, removes vehicle from ZipGraph(no double assignments)
     def fillReq(self, req: Request):
         closestV, distance = self.closestVehicle(req.zip, req.vType)
@@ -216,25 +214,14 @@ class ZipGraph:
             r = self.fillReq(r)
         return reqL
 
-
-
-
-
-
-
-
-
-        pass
-
-
     def __str__(self):
         return str(self.g)
-
 
 
 vList = []
 rList = []
 dList = []
+
 with open('EmergencyVehicles.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     vList = EmergencyVehicleList()
@@ -251,10 +238,17 @@ with open('Distance.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     dList = ZipDistanceList()
     dList.addAllFromCSV(reader)
-    g = ZipGraph()
-    g.constructFromZDList(dList)
 
-    # print(dict(g.g.nodes))
-    # print(g.g.edges.data())
-    g.updateVehicleLocations(vList)
-    print(g.fillReqList(rList))
+g = ZipGraph()
+g.constructFromZDList(dList)
+
+# print(dict(g.g.nodes))
+# print(g.g.edges.data())
+g.updateVehicleLocations(vList)
+
+print(vList)
+print(rList)
+print(dList)
+print("\n\n------------------- Filling Requests -------------------\n\n")
+print(g.fillReqList(rList))
+print("\n\nDone!")
