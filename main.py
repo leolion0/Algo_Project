@@ -226,18 +226,19 @@ with open('EmergencyVehicles.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     vList = EmergencyVehicleList()
     vList.addAllFromCSV(reader)
-    # print(ourVs)
+    # print(vList)
 
 with open('Request.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     rList = RequestList()
     rList.addAllFromCSV(reader)
-    # theList.print()
+    # print(rList)
 
 with open('Distance.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     dList = ZipDistanceList()
     dList.addAllFromCSV(reader)
+    # print(dList)
 
 g = ZipGraph()
 g.constructFromZDList(dList)
