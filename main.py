@@ -47,16 +47,19 @@ class EmergencyVehicleList:
 
 
 class Request:
-    def __init__(self, id=-1, vType = -1, zip =-1, vehicleID = -1):
+    def __init__(self, id=-1, vType = -1, zip =-1, vehicleID = -1, distance = -1):
         self.id = id
         self.vType = vType
         self.zip = zip
         self.vehicle = vehicleID
+        self.distance = distance
 
     def __str__(self):
         out = self.id + ", "
         out += str(self.vType) + ", "
-        out += str(self.zip)
+        out += str(self.zip) + ", "
+        out += str(self.vehicle) + ", "
+        out += str(self.distance)
         return out
 
 
@@ -193,8 +196,25 @@ class ZipGraph:
             u = min(dists, key=dists.get)
             for e in  self.vehiclesByZip[str(u)]:
                 if e.vType == str(vehicleType):
-                    return e
+                    return e, dists[u]
             dists.pop(u)
+
+
+    #Takes in request, finds closest available vehicle, updates request
+    # vehicleID and distance, removes vehicle from ZipGraph(no double assignments)
+    def fillReq(self, req: Request):
+        closestV, distance = self.closestVehicle(req.zip, req.vType)
+        req.distance = distance
+        req.vehicle = closestV.id
+        oldZipData = self.vehiclesByZip[closestV.zip]
+        oldZipData.remove(closestV)
+        self.vehiclesByZip[closestV.zip] = oldZipData
+        return req
+
+    def fillReqList(self, reqL: RequestList):
+        for r in reqL:
+            r = self.fillReq(r)
+        return reqL
 
 
 
@@ -212,27 +232,29 @@ class ZipGraph:
 
 
 
-ourVs = []
+vList = []
+rList = []
+dList = []
 with open('EmergencyVehicles.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
-    ourVs = EmergencyVehicleList()
-    ourVs.addAllFromCSV(reader)
+    vList = EmergencyVehicleList()
+    vList.addAllFromCSV(reader)
     # print(ourVs)
 
 with open('Request.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
-    theList = RequestList()
-    theList.addAllFromCSV(reader)
+    rList = RequestList()
+    rList.addAllFromCSV(reader)
     # theList.print()
 
 with open('Distance.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
-    theList = ZipDistanceList()
-    theList.addAllFromCSV(reader)
+    dList = ZipDistanceList()
+    dList.addAllFromCSV(reader)
     g = ZipGraph()
-    g.constructFromZDList(theList)
+    g.constructFromZDList(dList)
 
     # print(dict(g.g.nodes))
     # print(g.g.edges.data())
-    g.updateVehicleLocations(ourVs)
-    print(g.closestVehicle('64153', 1))
+    g.updateVehicleLocations(vList)
+    print(g.fillReqList(rList))
