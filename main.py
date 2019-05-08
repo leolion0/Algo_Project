@@ -175,7 +175,7 @@ class ZipGraph:
                     distance[z] = alt
                     prev[z] = u
         return distance
-
+    #Takes in the list created from the csv file and updates the vehicles zip code to its current location
     def updateVehicleLocations(self, elist: EmergencyVehicleList):
         for i in elist:
             # print(i.zip)
@@ -188,7 +188,8 @@ class ZipGraph:
             zipList.append(i)
 
             self.vehiclesByZip.update({str(i.zip):zipList})
-
+            
+    #Takes in the zip code( souce node) and vehicle type and finds the closet avaianle vehicle by calling the dijsktras function
     def closestVehicle(self, startZip, vehicleType):
         dists = self.dijkstras(startZip)
         while len(dists) > 0 :
@@ -217,7 +218,7 @@ class ZipGraph:
     def __str__(self):
         return str(self.g)
 
-
+#Create lists for use when parsing the input from the csv files  
 vList = []
 rList = []
 dList = []
