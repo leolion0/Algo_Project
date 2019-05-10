@@ -26,7 +26,6 @@ class ZipDistanceList:
     def addAllFromCSV(self, reader: csv.reader):
         tupList = list(reader)
         for row in tupList:
-            # print(row)
             zip1, zip2, dist = row
             newDist = ZipDistance(zip1, zip2, dist)
             self.zList.append(newDist)

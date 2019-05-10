@@ -3,11 +3,12 @@ from classes.Request import *
 from classes.ZipDistance import *
 from classes.ZipGraph import *
 
-vList = []
+#Initialize lists for vehicles, requests, and zip distances respectively in wider scope.
+vList = [] 
 rList = []
 dList = []
 
-# Create Emergency Vehicle List
+#Constructs EmergencyVehicleList from csv file.
 with open('EmergencyVehicles.csv', newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',')
     vList = EmergencyVehicleList()
@@ -25,6 +26,7 @@ with open('Distance.csv', newline='') as csvfile:
     dList = ZipDistanceList()
     dList.addAllFromCSV(reader)
 
+#Create new ZipGraph and read in all edges (ZipDistances)
 g = ZipGraph()
 g.constructFromZDList(dList)
 g.updateVehicleLocations(vList)
@@ -33,6 +35,10 @@ g.updateVehicleLocations(vList)
 print(vList)
 print(rList)
 print(dList)
+
 print("\n\n------------------- Filling Requests -------------------\n\n")
+
+#Do the thing
 print(g.fillReqList(rList))
 print("\n\nDone!")
+

@@ -1,13 +1,15 @@
 import csv
 from prettytable import PrettyTable
 
-# A single emergency vehicle
+
+#Contains fields for vehicle ID, vehicle type, and current location by zip
 class EmergencyVehicle:
     def __init__(self, id=-1, vType = -1, zip =-1):
         self.id = id
         self.vType = vType
         self.zip = zip
 
+#prints in same format as read from csv
     def __str__(self):
         out = self.id + ", "
         out += str(self.vType) + ", "
@@ -27,7 +29,6 @@ class EmergencyVehicleList:
         tupList = list(reader)
 
         for row in tupList:
-            # print(row)
             id,vType,zip = row
             newVeh = EmergencyVehicle(id,vType,zip)
             self.vList.append(newVeh)

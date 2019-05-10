@@ -30,7 +30,6 @@ class RequestList:
     def addAllFromCSV(self, reader: csv.reader):
         tupList = list(reader)
         for row in tupList:
-            # print(row)
             id, vType, zip = row
             newVeh = Request(id, vType, zip)
             self.rList.append(newVeh)
