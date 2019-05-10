@@ -1,8 +1,8 @@
 import csv
 import networkx as nx
 import sys
-import copy
 from prettytable import PrettyTable
+from queue import PriorityQueue
 
 
 class EmergencyVehicle:
@@ -143,37 +143,20 @@ class ZipGraph:
             self.vehiclesByZip.update({str(e):[]})
 
     def dijkstras(self, startZip):
-        nodes = set(self.g.nodes)
+        pq = PriorityQueue()
         distance = {}
-        prev = {}
-        for n in nodes:
+        for n in self.g.nodes:
             distance[n] = sys.maxsize
-            prev[n] = None
+        pq.put((0, startZip))
         distance[startZip] = 0
-        removed = set()
-        while  len(nodes) > 0 : #loop until no nodes are left
-            newDist = copy.deepcopy(distance)
-            for i in removed:
-                try:
-                    newDist.pop(i)
-                except:
-                    pass
-            u = min(newDist, key=newDist.get)
-            removed.add(u)
-            try:
-                nodes.remove(u)
-            except:
-                pass
 
-            neighbors = set()
+        while not pq.empty():  #loop until no nodes are left
+            u = pq.get()[1]
             for v in iter(self.g[u]):
-                neighbors.add(v)
-            neighbors = neighbors - removed
-            for z in neighbors:
-                alt = distance[u] + int(self.g[u][z]['weight']) #might need to be casted to strings
-                if alt < distance[z]:
-                    distance[z] = alt
-                    prev[z] = u
+                alt = distance[u] + int(self.g[u][v]['weight']) #might need to be casted to strings
+                if alt < distance[v]:
+                    distance[v] = alt
+                    pq.put((distance[v], v))
         return distance
 
     def updateVehicleLocations(self, elist: EmergencyVehicleList):
