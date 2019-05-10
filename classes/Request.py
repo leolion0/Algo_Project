@@ -1,6 +1,8 @@
 import csv
 from prettytable import PrettyTable
 
+#Request, RequestList, ZipDistance, and ZipDistanceList are (virtually) identical in function to Emergency vehicle &
+#EmergencyVehicleList.
 class Request:
     def __init__(self, id=-1, vType = -1, zip =-1, vehicleID = -1, distance = -1):
         self.id = id
@@ -17,6 +19,7 @@ class Request:
         out += str(self.distance)
         return out
 
+
 class RequestList:
     def __init__(self, inlist=[]):
         self.rList = inlist
@@ -27,7 +30,6 @@ class RequestList:
     def addAllFromCSV(self, reader: csv.reader):
         tupList = list(reader)
         for row in tupList:
-            # print(row)
             id, vType, zip = row
             newVeh = Request(id, vType, zip)
             self.rList.append(newVeh)
