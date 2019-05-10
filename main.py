@@ -1,7 +1,8 @@
-from classes.EmergencyVehicle import *
+from classes.Graph import *
 from classes.Request import *
-from classes.ZipDistance import *
 from classes.ZipGraph import *
+from classes.ZipDistance import *
+from classes.EmergencyVehicle import *
 
 #Initialize lists for vehicles, requests, and zip distances respectively in wider scope.
 vList = [] 

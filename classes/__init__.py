@@ -2,5 +2,6 @@ __all__ = [
 	'EmergencyVehicle',
 	'Request',
 	'ZipDistance',
-	'ZipGraph'
+	'ZipGraph',
+	'Graph'
 ]

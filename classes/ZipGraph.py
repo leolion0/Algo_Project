@@ -1,8 +1,8 @@
 import sys
-import networkx as nx
 from queue import PriorityQueue
 from prettytable import PrettyTable
 
+from classes.Graph import *
 from classes.Request import *
 from classes.ZipDistance import *
 from classes.EmergencyVehicle import *
@@ -13,7 +13,7 @@ from classes.EmergencyVehicle import *
 
 class ZipGraph:
     def __init__(self):
-        self.g = nx.Graph()
+        self.g = Graph()
         self.vehiclesByZip = {}
         pass
 
