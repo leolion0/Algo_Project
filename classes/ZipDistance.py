@@ -1,6 +1,7 @@
 import csv
 from prettytable import PrettyTable
 
+# Stores the distance between two zips 
 class ZipDistance:
     def __init__(self, zip1 = -1, zip2 = -1, dist = -1):
         self.zip1 = zip1
@@ -13,6 +14,7 @@ class ZipDistance:
         out += str(self.dist)
         return out
 
+# Accessor for all the zip nodes
 class ZipDistanceList:
     def __init__(self, inlist=[]):
         self.zList = inlist
@@ -20,6 +22,7 @@ class ZipDistanceList:
     def __getitem__(self, key):
         return self.zList[key]
 
+    # Adds each Zip Distance from the csv
     def addAllFromCSV(self, reader: csv.reader):
         tupList = list(reader)
         for row in tupList:
@@ -28,6 +31,7 @@ class ZipDistanceList:
             newDist = ZipDistance(zip1, zip2, dist)
             self.zList.append(newDist)
 
+    # Prints the Zip distance table
     def __str__(self):
         table = PrettyTable(['Zip1', 'Zip2', 'Distance'])
         for z in self.zList:

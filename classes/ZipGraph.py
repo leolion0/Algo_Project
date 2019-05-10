@@ -1,9 +1,10 @@
 import sys
 import networkx as nx
-from classes.Request import *
 from queue import PriorityQueue
-from classes.ZipDistance import *
 from prettytable import PrettyTable
+
+from classes.Request import *
+from classes.ZipDistance import *
 from classes.EmergencyVehicle import *
 
 class ZipGraph:
@@ -12,15 +13,19 @@ class ZipGraph:
         self.vehiclesByZip = {}
         pass
 
+    # Adds the edge between two zips
     def addDist(self, zipDist: ZipDistance):
         self.g.add_edge(zipDist.zip1, zipDist.zip2, weight=zipDist.dist)
 
+    # Build the Graph from the Ziplist
     def constructFromZDList(self, zList: ZipDistanceList):
         for d in zList.zList:
             self.addDist(d)
         for e in self.g.nodes:
             self.vehiclesByZip.update({str(e):[]})
 
+    # Implements dijktras algorithm with a prority queue
+    # Finds the list of distances from startZip to all other zips
     def dijkstras(self, startZip):
         pq = PriorityQueue()
         distance = {}
@@ -38,19 +43,20 @@ class ZipGraph:
                     pq.put((distance[v], v))
         return distance
 
+    # Update Vehicles to new location unless already there
     def updateVehicleLocations(self, elist: EmergencyVehicleList):
-        for i in elist:
-            # print(i.zip)
+        for vehicle in elist:
             try:
-                zipList = self.vehiclesByZip[str(i.zip)]
+                zipList = self.vehiclesByZip[str(vehicle.zip)]
             except:
-                self.vehiclesByZip.update({str(i.zip):[]})
-                zipList = self.vehiclesByZip[str(i.zip)]
+                self.vehiclesByZip.update({str(vehicle.zip):[]})
+                zipList = self.vehiclesByZip[str(vehicle.zip)]
 
-            zipList.append(i)
+            zipList.append(vehicle)
 
-            self.vehiclesByZip.update({str(i.zip):zipList})
+            self.vehiclesByZip.update({str(vehicle.zip):zipList})
 
+    # Find closest vehicle via dijkstras algorithm
     def closestVehicle(self, startZip, vehicleType):
         dists = self.dijkstras(startZip)
         while len(dists) > 0 :
@@ -71,6 +77,7 @@ class ZipGraph:
         self.vehiclesByZip[closestV.zip] = oldZipData
         return req
 
+    # Given all requests it fufills them
     def fillReqList(self, reqL: RequestList):
         for r in reqL:
             r = self.fillReq(r)
